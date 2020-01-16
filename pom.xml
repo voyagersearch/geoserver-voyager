@@ -57,7 +57,7 @@
                 </executions>
                 <configuration>
                   <outputDirectory>${project.build.directory}</outputDirectory>
-                  <includeArtifactIds>gt-geojson,json-simple</includeArtifactIds>
+                  <includeArtifactIds>gt-geojson,json-simple,solr-solrj</includeArtifactIds>
                 </configuration>
             </plugin>
         </plugins>
