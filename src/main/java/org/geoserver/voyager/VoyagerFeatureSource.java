@@ -2,9 +2,13 @@ package org.geoserver.voyager;
 
 import com.google.common.base.Throwables;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.request.LukeRequest;
 import org.apache.solr.client.solrj.request.QueryRequest;
+import org.apache.solr.client.solrj.response.LukeResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.json.HeatmapJsonFacet;
+import org.apache.solr.common.luke.FieldFlag;
 import org.apache.solr.common.util.NamedList;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.Query;
@@ -28,7 +32,9 @@ import org.opengis.referencing.FactoryException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import static org.geoserver.voyager.VoyagerDataStore.LOG;
@@ -230,7 +236,34 @@ public class VoyagerFeatureSource extends ContentFeatureSource  {
             throw new IOException(e);
         }
         tb.add(config.uniqueIdField, String.class);
-        tb.add("name", String.class);
+
+        // use luke to get all of the other properties
+        LukeRequest req = new LukeRequest();
+        req.setShowSchema(true);
+
+        try {
+            LukeResponse rsp = req.process(store.solr);
+            for (Map.Entry<String, LukeResponse.FieldInfo> e : rsp.getFieldInfo().entrySet()) {
+                String field = e.getKey();
+                LukeResponse.FieldInfo info = e.getValue();
+                if (field.equals(config.uniqueIdField) || field.equals(config.geoField)) continue;
+
+                EnumSet<FieldFlag> flags = info.getFlags();
+
+                boolean storedOrDocValues = flags.contains(FieldFlag.STORED) || flags.contains(FieldFlag.DOC_VALUES);
+                if (!storedOrDocValues) continue;
+
+                VoyagerType type = VoyagerType.match(info.getType());
+                tb.userData(VoyagerType.class, type);
+
+                tb.minOccurs(0);
+                tb.maxOccurs(flags.contains(FieldFlag.MULTI_VALUED) ? Integer.MAX_VALUE : 1);
+                tb.add(field, type.javaClass);
+            }
+        }
+        catch (SolrServerException e) {
+            throw new IOException(e);
+        }
 
         return tb.buildFeatureType();
 

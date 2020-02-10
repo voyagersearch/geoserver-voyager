@@ -79,8 +79,7 @@ public class VoyagerDataStore extends ContentDataStore  {
     SolrQuery query(SimpleFeatureType schema, Query q) throws Exception {
         SolrQuery query = new SolrQuery();
         query.setParam("omitHeader", true);
-        query.addField(config.uniqueIdField);
-        query.addField("name");
+        query.addField("*");
         query.addField(config.geoField + ":[geo]");
 
         // Column names

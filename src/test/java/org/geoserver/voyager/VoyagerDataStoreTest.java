@@ -89,6 +89,13 @@ public class VoyagerDataStoreTest {
             assertNotNull(f);
             System.out.println(f);
         }
+    }
 
+    @Test
+    public void schema() throws Exception {
+        SimpleFeatureSource source = store.getFeatureSource("v0");
+        source.getSchema().getAttributeDescriptors().forEach(d -> {
+            System.out.println(d.getLocalName());
+        });
     }
 }
