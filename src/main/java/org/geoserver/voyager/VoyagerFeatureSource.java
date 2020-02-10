@@ -32,9 +32,10 @@ import org.opengis.referencing.FactoryException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 import static org.geoserver.voyager.VoyagerDataStore.LOG;
@@ -239,7 +240,7 @@ public class VoyagerFeatureSource extends ContentFeatureSource  {
 
         // use luke to get all of the other properties
         LukeRequest req = new LukeRequest();
-        req.setShowSchema(true);
+        //req.setShowSchema(true);  // setting this doesn't return dynamic fields but means we must manually parse flags
 
         try {
             LukeResponse rsp = req.process(store.solr);
@@ -248,7 +249,8 @@ public class VoyagerFeatureSource extends ContentFeatureSource  {
                 LukeResponse.FieldInfo info = e.getValue();
                 if (field.equals(config.uniqueIdField) || field.equals(config.geoField)) continue;
 
-                EnumSet<FieldFlag> flags = info.getFlags();
+
+                Set<FieldFlag> flags = parseFlags(info.getSchema());
 
                 boolean storedOrDocValues = flags.contains(FieldFlag.STORED) || flags.contains(FieldFlag.DOC_VALUES);
                 if (!storedOrDocValues) continue;
@@ -267,6 +269,14 @@ public class VoyagerFeatureSource extends ContentFeatureSource  {
 
         return tb.buildFeatureType();
 
+    }
+
+    private Set<FieldFlag> parseFlags(String schema) {
+        Set<FieldFlag> flags = new HashSet<>();
+        if (schema.contains("S")) flags.add(FieldFlag.STORED);
+        if (schema.contains("D")) flags.add(FieldFlag.DOC_VALUES);
+        if (schema.contains("M")) flags.add(FieldFlag.MULTI_VALUED);
+        return flags;
     }
 
     private Filter[] splitFilter(Filter original) {

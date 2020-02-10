@@ -40,6 +40,7 @@ public class VoyagerDataStoreTest {
     @Before
     public void setup() {
         VoyagerConfig config = VoyagerConfig.local();
+        //config.uri = "http://ec2-3-211-57-112.compute-1.amazonaws.com/";
         config.filters.add("geohash:*");
         store = new VoyagerDataStore(config);
     }
