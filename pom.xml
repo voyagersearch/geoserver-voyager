@@ -14,8 +14,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <gs.version>2.16.1</gs.version>
-        <gt.version>22.1</gt.version>
+        <gs.version>2.19.2</gs.version>
+        <gt.version>25.2</gt.version>
         <solr.version>7.7.2-VG2</solr.version>
     </properties>
 
@@ -94,9 +94,11 @@
             <url>https://nexus.voyagerdev.com/repository/voyager-public</url>
         </repository>
         <repository>
-            <id>boundless</id>
-            <name>Boundless Maven Repository</name>
-            <url>https://repo.boundlessgeo.com/main/</url>
+            <id>osgeo</id>
+            <name>OSGeo Release Repository</name>
+            <url>https://repo.osgeo.org/repository/release/</url>
+            <snapshots><enabled>false</enabled></snapshots>
+            <releases><enabled>true</enabled></releases>
         </repository>
     </repositories>
 </project>

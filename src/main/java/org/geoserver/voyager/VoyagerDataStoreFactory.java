@@ -8,7 +8,6 @@ import org.geotools.util.Converters;
 import org.geotools.util.KVP;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
@@ -60,7 +59,7 @@ public class VoyagerDataStoreFactory implements DataStoreFactorySpi {
     }
 
     @Override
-    public DataStore createDataStore(Map<String, Serializable> params) throws IOException {
+    public DataStore createDataStore(Map<String, ?> params) throws IOException {
         VoyagerConfig config = new VoyagerConfig();
         try {
             config.uri = param(URL, params, URL.class).toURI().toString();
@@ -82,11 +81,11 @@ public class VoyagerDataStoreFactory implements DataStoreFactorySpi {
     }
 
     @Override
-    public DataStore createNewDataStore(Map<String, Serializable> params) throws IOException {
+    public DataStore createNewDataStore(Map<String, ?> params) throws IOException {
         throw new UnsupportedOperationException();
     }
 
-    <T> T param(Param p, Map<String,Serializable> params, Class<T> type) {
+    <T> T param(Param p, Map<String,?> params, Class<T> type) {
         Object v = null;
         try {
             v = p.lookUp(params);
