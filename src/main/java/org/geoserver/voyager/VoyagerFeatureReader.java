@@ -80,7 +80,7 @@ public class VoyagerFeatureReader implements SimpleFeatureReader {
 
         for (AttributeDescriptor att : getFeatureType().getAttributeDescriptors()) {
             Object val = doc.get(att.getLocalName());
-            if (att instanceof GeometryDescriptor) {
+            if (val != null && att instanceof GeometryDescriptor) {
                 val = geojson.read(val);
             }
             builder.set(att.getLocalName(), val);
