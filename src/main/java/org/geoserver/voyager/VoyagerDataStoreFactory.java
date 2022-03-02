@@ -34,6 +34,9 @@ public class VoyagerDataStoreFactory implements DataStoreFactorySpi {
     public static final Param PAGE_SIZE = new Param("pageSize", Integer.class,
             "Request Page Size", false, 100);
 
+    public static final Param FIELD_BLACKLIST = new Param("fieldBlacklist", String.class,
+            "Comma-separated List of Fields to Exclude", false);
+
     public static final Param NAMESPACE = new Param("namespace", URI.class, "Namespace URI", false, (Object)null, new KVP(new Object[]{"level", "advanced"}));
 
     static final Splitter SPLITTER = Splitter.on(Pattern.compile("\\s*,\\s*"));
@@ -50,7 +53,7 @@ public class VoyagerDataStoreFactory implements DataStoreFactorySpi {
 
     @Override
     public Param[] getParametersInfo() {
-        return new Param[]{ URL, INDEX, GEO_FIELD, FILTERS, TIMEOUT, PAGE_SIZE, NAMESPACE };
+        return new Param[]{ URL, INDEX, GEO_FIELD, FILTERS, TIMEOUT, PAGE_SIZE, FIELD_BLACKLIST, NAMESPACE };
     }
 
     @Override
@@ -68,6 +71,8 @@ public class VoyagerDataStoreFactory implements DataStoreFactorySpi {
             config.timeout = param(TIMEOUT, params, Integer.class);
             config.pageSize = param(PAGE_SIZE, params, Integer.class);
             config.filters = Optional.ofNullable(param(FILTERS, params, String.class))
+                    .map(SPLITTER::splitToList).orElse(Collections.emptyList());
+            config.fieldBlacklist = Optional.ofNullable(param(FIELD_BLACKLIST, params, String.class))
                     .map(SPLITTER::splitToList).orElse(Collections.emptyList());
 
             VoyagerDataStore store = new VoyagerDataStore(config);

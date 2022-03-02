@@ -12,11 +12,16 @@ public class VoyagerConfig {
     public SpatialStrategy spatialStrategy = SpatialStrategy.RPT;
     public String geoField = "geohash";
     public List<String> filters = new ArrayList<>();
+    public List<String> fieldBlacklist = new ArrayList<>();
     public int timeout = 10000;
     public int pageSize = 100;
 
     public String solrUri() {
         return StringUtils.join(new String[]{uri, "solr", index}, '/');
+    }
+
+    public boolean includesField(String field) {
+        return !fieldBlacklist.contains(field);
     }
 
     public static VoyagerConfig local() {

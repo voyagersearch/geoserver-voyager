@@ -85,7 +85,7 @@ public class VoyagerDataStore extends ContentDataStore  {
         // Column names
         if (q.getPropertyNames() != null) {
             for (String prop : q.getPropertyNames()) {
-                query.addField(prop);
+                if (config.includesField(prop)) query.addField(prop);
             }
         }
         query.setQuery("*:*");
