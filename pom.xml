@@ -14,7 +14,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <gs.version>2.19.2</gs.version>
+        <gs.version>2.19.6</gs.version>
         <gt.version>25.2</gt.version>
         <solr.version>7.7.2-VG2</solr.version>
     </properties>
