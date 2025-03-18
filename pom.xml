@@ -16,7 +16,7 @@
         <java.version>1.8</java.version>
         <gs.version>2.19.2</gs.version>
         <gt.version>25.2</gt.version>
-        <solr.version>7.7.2-VG2</solr.version>
+        <solr.version>9.7.0-VG1</solr.version>
     </properties>
 
     <build>
